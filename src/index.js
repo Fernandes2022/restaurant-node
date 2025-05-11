@@ -57,7 +57,7 @@ const swaggerOptions = {
     info: {
       title: 'Restaurant API',
       version: '1.0.0',
-      description: 'API for restaurant platform'
+      description: 'API for restaurant platform',
     },
     servers: [
       { url: 'http://localhost:3000', description: 'Local server' },
@@ -65,28 +65,29 @@ const swaggerOptions = {
         url: process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}`
           : 'https://your-vercel-domain.vercel.app',
-        description: 'Production server'
-      }
+        description: 'Production server',
+      },
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
-          bearerFormat: 'JWT'
-        }
-      }
+          bearerFormat: 'JWT',
+        },
+      },
     },
-    security: [{ bearerAuth: [] }]
+    security: [{ bearerAuth: [] }],
   },
-  apis: [path.join(__dirname, 'docs', 'swaggerDocs.js')], // ✅ Correct path
+  apis: [path.join(__dirname, 'docs', 'swaggerDocs.js')],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
   explorer: true,
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'Restaurant API Documentation'
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css',
+  customSiteTitle: 'Restaurant API Documentation',
 }));
 
 module.exports = { app };
