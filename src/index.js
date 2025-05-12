@@ -64,7 +64,7 @@ const swaggerOptions = {
       {
         url: process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}`
-          : 'https://your-vercel-domain.vercel.app',
+          : 'https://timi-restaurant-node.vercel.app',
         description: 'Production server',
       },
     ],
