@@ -63,7 +63,7 @@ const swaggerOptions = {
     },
     security: [{ bearerAuth: [] }],
   },
-  apis: ['./src/docs/swaggerDocs.js'],
+  apis: [path.join(__dirname, 'docs', 'swaggerDocs.js')],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
