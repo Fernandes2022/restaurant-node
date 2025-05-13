@@ -18,30 +18,117 @@
 // }
 
 
-
 // start();
 
 
-// server.js
-const { app } = require("./index"); // Assuming index.js is in the same directory as server.js
-const connectDB = require("./config/db");
 
-// Connect to DB. For Vercel, this will run during cold starts.
-// You might consider a more robust connection management for serverless environments
-// to avoid excessive connections on repeated invocations, but for a basic setup, this is often fine.
-connectDB().catch(err => {
-  console.error("Database connection failed:", err);
-  // Consider throwing an error or exiting if DB connection is critical at startup
+
+// server.js
+const { app } = require("./index"); // Assuming index.js exports the Express app
+const connectDB = require("./config/db"); // This function should return a Promise
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const path = require('path');
+const express = require('express');
+
+// Use a variable to hold the connection promise
+let dbConnectionPromise = null;
+
+// Swagger Configuration
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Restaurant API',
+      version: '1.0.0',
+      description: 'API for restaurant platform',
+    },
+    servers: [
+      { url: 'http://localhost:3000', description: 'Local server' },
+      {
+        url: process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : 'https://timi-restaurant-node.vercel.app',
+        description: 'Production server',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
+  },
+  apis: [path.join(__dirname, 'docs', 'swaggerDocs.js')],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+// Serve Swagger JSON
+app.get('/api-docs/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerDocs);
 });
 
-// Export the app directly for Vercel
+// Setup Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
+  explorer: true,
+  customSiteTitle: 'Restaurant API Documentation',
+  swaggerOptions: {
+    persistAuthorization: true,
+  },
+  customCss: '.swagger-ui .topbar { display: none }',
+  customJs: '/swagger-ui-init.js'
+}));
+
+// Serve Swagger UI assets
+app.use('/swagger-ui-init.js', express.static(path.join(__dirname, 'public', 'swagger-ui-init.js')));
+app.use('/swagger-ui.css', express.static(path.join(__dirname, 'public', 'swagger-ui.css')));
+
+// Middleware to ensure database connection for every request
+// This makes your routes wait for the DB connection if it's not ready
+app.use(async (req, res, next) => {
+    try {
+        // Start connection process if not already started
+        if (!dbConnectionPromise) {
+            dbConnectionPromise = connectDB(); // Call connectDB, it returns a Promise
+        }
+
+        // Await the connection to ensure it's established
+        // If connectDB returns the actual connection object, you can store it.
+        // For Mongoose, it manages the connection internally, so just awaiting its completion is key.
+        await dbConnectionPromise;
+
+        // If connection is successful, proceed to the next middleware/route
+        next();
+    } catch (error) {
+        console.error("Database connection error in middleware:", error);
+        // Reset the promise so a new attempt can be made on the next request
+        dbConnectionPromise = null;
+        // Send an error response if the database connection fails
+        res.status(503).send("Service Unavailable: Database connection failed.");
+    }
+});
+
+// Export the app for Vercel
 module.exports = app;
 
-// Optional: This part is for local development only.
-// It ensures the server only listens on a port when run directly (e.g., `node server.js`).
+// Optional: Local development listener
 if (require.main === module) {
-  const PORT = process.env.PORT || 3000; // Use process.env.PORT for local too
-  app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT} (for local development)`);
-  });
+  const PORT = process.env.PORT || 3000;
+  // For local development, ensure the DB is connected before listening
+  connectDB()
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`Server listening on port ${PORT} (local development)`);
+      });
+    })
+    .catch(err => {
+      console.error("Failed to connect to database locally:", err);
+      process.exit(1); // Exit if DB connection fails locally
+    });
 }

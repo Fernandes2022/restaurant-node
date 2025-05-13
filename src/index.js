@@ -3,8 +3,6 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const swaggerUi = require('swagger-ui-express');
-const swaggerJsDoc = require('swagger-jsdoc');
 const path = require('path');
 
 const app = express();
@@ -49,45 +47,5 @@ app.use('/api/admin/ingredients', adminIngredientRouters);
 app.use('/api/admin/events', adminEventRouters);
 app.use('/api/events', eventRouters);
 app.use('/api/admin/food', adminFoodRouters);
-
-// Swagger Configuration
-const swaggerOptions = {
-  swaggerDefinition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Restaurant API',
-      version: '1.0.0',
-      description: 'API for restaurant platform',
-    },
-    servers: [
-      { url: 'http://localhost:3000', description: 'Local server' },
-      {
-        url: process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : 'https://timi-restaurant-node.vercel.app',
-        description: 'Production server',
-      },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
-    },
-    security: [{ bearerAuth: [] }],
-  },
-  apis: [path.join(__dirname, 'docs', 'swaggerDocs.js')],
-};
-
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
-  explorer: true,
-  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css',
-  customSiteTitle: 'Restaurant API Documentation',
-}));
 
 module.exports = { app };
