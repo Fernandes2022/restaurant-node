@@ -63,7 +63,7 @@ const swaggerOptions = {
     },
     security: [{ bearerAuth: [] }],
   },
-  apis: [path.join(__dirname, 'docs', 'swaggerDocs.js')],
+  apis: ['./src/docs/swaggerDocs.js'], // Updated path to be relative to project root
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -74,20 +74,26 @@ app.get('/api-docs/swagger.json', (req, res) => {
   res.send(swaggerDocs);
 });
 
-// Setup Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
+// Setup Swagger UI with explicit options
+app.use('/api-docs', swaggerUi.serve);
+app.get('/api-docs', swaggerUi.setup(swaggerDocs, {
   explorer: true,
   customSiteTitle: 'Restaurant API Documentation',
   swaggerOptions: {
     persistAuthorization: true,
-  },
-  customCss: '.swagger-ui .topbar { display: none }',
-  customJs: '/swagger-ui-init.js'
+    displayRequestDuration: true,
+    docExpansion: 'list',
+    filter: true,
+    showCommonExtensions: true,
+    syntaxHighlight: {
+      activate: true,
+      theme: 'monokai'
+    }
+  }
 }));
 
-// Serve Swagger UI assets
-app.use('/swagger-ui-init.js', express.static(path.join(__dirname, 'public', 'swagger-ui-init.js')));
-app.use('/swagger-ui.css', express.static(path.join(__dirname, 'public', 'swagger-ui.css')));
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware to ensure database connection for every request
 // This makes your routes wait for the DB connection if it's not ready

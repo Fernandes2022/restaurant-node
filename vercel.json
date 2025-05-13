@@ -8,15 +8,11 @@
   ],
   "routes": [
     {
-      "src": "/swagger-ui-init.js",
-      "dest": "src/public/swagger-ui-init.js"
-    },
-    {
-      "src": "/swagger-ui.css",
-      "dest": "src/public/swagger-ui.css"
-    },
-    {
       "src": "/api-docs/swagger.json",
+      "dest": "src/server.js"
+    },
+    {
+      "src": "/api-docs",
       "dest": "src/server.js"
     },
     {
