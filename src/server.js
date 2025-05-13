@@ -63,10 +63,14 @@ const swaggerOptions = {
     },
     security: [{ bearerAuth: [] }],
   },
-  apis: ['./src/docs/swaggerDocs.js'], // Updated path to be relative to project root
+  apis: ['./src/docs/swaggerDocs.js'],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+// Serve Swagger UI assets
+const swaggerUiAssetPath = path.join(__dirname, '../node_modules/swagger-ui-dist');
+app.use('/api-docs', express.static(swaggerUiAssetPath));
 
 // Serve Swagger JSON
 app.get('/api-docs/swagger.json', (req, res) => {
@@ -74,7 +78,7 @@ app.get('/api-docs/swagger.json', (req, res) => {
   res.send(swaggerDocs);
 });
 
-// Setup Swagger UI with explicit options
+// Setup Swagger UI
 app.use('/api-docs', swaggerUi.serve);
 app.get('/api-docs', swaggerUi.setup(swaggerDocs, {
   explorer: true,
@@ -91,9 +95,6 @@ app.get('/api-docs', swaggerUi.setup(swaggerDocs, {
     }
   }
 }));
-
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware to ensure database connection for every request
 // This makes your routes wait for the DB connection if it's not ready
