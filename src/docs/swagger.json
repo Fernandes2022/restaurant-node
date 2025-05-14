@@ -908,7 +908,7 @@
         }
       }
     },
-    "/api/orders/restaurant/{restaurantId}": {
+    "/api/order/restaurant/{restaurantId}": {
       "get": {
         "summary": "Get all orders for a restaurant",
         "tags": [
