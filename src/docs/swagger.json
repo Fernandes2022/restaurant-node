@@ -1,0 +1,1491 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Restaurant API",
+    "version": "1.0.0",
+    "description": "API for restaurant platform"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    },
+    {
+      "url": "https://timi-restaurant-node.vercel.app",
+      "description": "Production server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "User management endpoints"
+    },
+    {
+      "name": "Restaurants",
+      "description": "Restaurant management endpoints"
+    },
+    {
+      "name": "Customer Restaurants",
+      "description": "Restaurant endpoints for customers"
+    },
+    {
+      "name": "Food (Admin)",
+      "description": "Food item management for restaurants"
+    },
+    {
+      "name": "Food (Customer)",
+      "description": "Food menu endpoints for customers"
+    },
+    {
+      "name": "Category",
+      "description": "Category endpoints"
+    },
+    {
+      "name": "Admin - Ingredients",
+      "description": "Admin Ingredient management"
+    },
+    {
+      "name": "Order (Restaurant)",
+      "description": "Order management for restaurant admins"
+    },
+    {
+      "name": "Order (User)",
+      "description": "Order creation for users"
+    },
+    {
+      "name": "Events",
+      "description": "Creating restaurants events"
+    },
+    {
+      "name": "Contact",
+      "description": "Contact form endpoints"
+    },
+    {
+      "name": "Cart",
+      "description": "Shopping cart management endpoints"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Restaurant": {
+        "type": "object",
+        "required": [
+          "name",
+          "description",
+          "cuisineType",
+          "address",
+          "contactInformation",
+          "openingHours"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the restaurant"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the restaurant"
+          },
+          "cuisineType": {
+            "type": "string",
+            "description": "Type of cuisine served"
+          },
+          "address": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "fullName": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "streetAddress": {
+                "type": "string"
+              }
+            }
+          },
+          "contactInformation": {
+            "type": "object",
+            "description": "Contact details of the restaurant"
+          },
+          "openingHours": {
+            "type": "string",
+            "description": "Restaurant operating hours"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of image URLs"
+          },
+          "open": {
+            "type": "boolean",
+            "description": "Whether the restaurant is currently open"
+          },
+          "numRating": {
+            "type": "number",
+            "description": "Restaurant rating"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "required": [
+          "customer",
+          "restaurant",
+          "items",
+          "deliveryAddress"
+        ],
+        "properties": {
+          "orderStatus": {
+            "type": "string",
+            "enum": ["PENDING", "COMPLETED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"]
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "food": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "number"
+                },
+                "totalPrice": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "deliveryAddress": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "fullName": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "streetAddress": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "fullName",
+                  "email",
+                  "password",
+                  "role"
+                ],
+                "properties": {
+                  "fullName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "summary": "Log in a user",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "summary": "Request password reset",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reset link sent to email"
+          }
+        }
+      }
+    },
+    "/auth/reset-password/{token}": {
+      "post": {
+        "summary": "Reset user password",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password successfully reset"
+          }
+        }
+      }
+    },
+    "/api/user/profile": {
+      "get": {
+        "summary": "Get authenticated user's profile",
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string"
+                    },
+                    "fullName": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/restaurants": {
+      "get": {
+        "summary": "Get all restaurants",
+        "tags": ["Customer Restaurants"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of restaurants retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "restaurants": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Restaurant"
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "pages": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new restaurant",
+        "tags": ["Restaurants"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Restaurant"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Restaurant created successfully"
+          }
+        }
+      }
+    },
+    "/api/restaurants/search": {
+      "get": {
+        "summary": "Search restaurants",
+        "tags": ["Customer Restaurants"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/restaurants/myrestaurant": {
+      "get": {
+        "summary": "Get restaurant by user ID",
+        "tags": ["Restaurants"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/restaurants/{id}": {
+      "get": {
+        "summary": "Get restaurant by ID",
+        "tags": ["Customer Restaurants"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restaurant"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update restaurant details",
+        "tags": ["Restaurants"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Restaurant"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Restaurant updated successfully"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete restaurant",
+        "tags": ["Restaurants"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/restaurants/favourite/{id}": {
+      "post": {
+        "summary": "Add restaurant to favorites",
+        "tags": ["Customer Restaurants"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant added to favorites successfully"
+          }
+        }
+      }
+    },
+    "/api/restaurants/rate/{id}": {
+      "post": {
+        "summary": "Rate a restaurant",
+        "tags": ["Customer Restaurants"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rating": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Restaurant rated successfully"
+          }
+        }
+      }
+    },
+    "/api/food": {
+      "post": {
+        "summary": "Create a new food item",
+        "tags": ["Food (Admin)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "description",
+                  "price",
+                  "category",
+                  "restaurant"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "restaurant": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  },
+                  "ingredients": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Food item created successfully"
+          }
+        }
+      }
+    },
+    "/api/food/search": {
+      "get": {
+        "summary": "Search food items",
+        "tags": ["Food (Customer)"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/food/restaurant/{restaurantId}": {
+      "get": {
+        "summary": "Get all food items for a restaurant",
+        "tags": ["Food (Customer)"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of food items retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/food/{id}": {
+      "delete": {
+        "summary": "Delete a food item",
+        "tags": ["Food (Admin)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Food item deleted successfully"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update food item availability",
+        "tags": ["Food (Admin)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "available": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Food item availability updated successfully"
+          }
+        }
+      }
+    },
+    "/api/order": {
+      "post": {
+        "summary": "Create a new order",
+        "tags": ["Order (User)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order created successfully"
+          }
+        }
+      }
+    },
+    "/api/order/user": {
+      "get": {
+        "summary": "Get user's orders",
+        "tags": ["Order (User)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's orders retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/orders/restaurant/{restaurantId}": {
+      "get": {
+        "summary": "Get all orders for a restaurant",
+        "tags": ["Order (Restaurant)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of orders retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/order/{orderId}": {
+      "delete": {
+        "summary": "Cancel an order",
+        "tags": ["Order (Restaurant)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order cancelled successfully"
+          }
+        }
+      }
+    },
+    "/api/order/{orderId}/{orderStatus}": {
+      "put": {
+        "summary": "Update order status",
+        "tags": ["Order (Restaurant)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "orderStatus",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["PENDING", "COMPLETED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order status updated successfully"
+          }
+        }
+      }
+    },
+    "/api/cart": {
+      "get": {
+        "summary": "Get cart items",
+        "tags": ["Cart"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart items retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/cart/add": {
+      "put": {
+        "summary": "Add item to cart",
+        "tags": ["Cart"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "foodId",
+                  "quantity"
+                ],
+                "properties": {
+                  "foodId": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item added to cart successfully"
+          }
+        }
+      }
+    },
+    "/api/cart/total": {
+      "get": {
+        "summary": "Calculate cart total",
+        "tags": ["Cart"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart total calculated successfully"
+          }
+        }
+      }
+    },
+    "/api/cart/clear": {
+      "put": {
+        "summary": "Clear cart",
+        "tags": ["Cart"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart cleared successfully"
+          }
+        }
+      }
+    },
+    "/api/cart-item/update": {
+      "put": {
+        "summary": "Update cart item quantity",
+        "tags": ["Cart"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "itemId",
+                  "quantity"
+                ],
+                "properties": {
+                  "itemId": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cart item quantity updated successfully"
+          }
+        }
+      }
+    },
+    "//api/cart-item/{id}/remove": {
+      "delete": {
+        "summary": "Remove item from cart",
+        "tags": ["Cart"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "itemId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item removed from cart successfully"
+          }
+        }
+      }
+    },
+    "/api/contact": {
+      "post": {
+        "summary": "Send contact form message",
+        "tags": ["Contact"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "message"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Message sent successfully"
+          }
+        }
+      }
+    },
+    "/api/events": {
+      "get": {
+        "summary": "Get all events",
+        "tags": ["Events"],
+        "responses": {
+          "200": {
+            "description": "List of events retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/events/restaurant/{restaurantId}": {
+      "post": {
+        "summary": "Create a new event",
+        "tags": ["Events"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "description",
+                  "date"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Event created successfully"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get restaurant events",
+        "tags": ["Events"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of restaurant events retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/events/{id}": {
+      "delete": {
+        "summary": "Delete an event",
+        "tags": ["Events"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/admin/category": {
+      "post": {
+        "summary": "Create a new category",
+        "tags": ["Category"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "restaurant"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "restaurant": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created successfully"
+          }
+        }
+      }
+    },
+    "/api/admin/category/restaurant/{id}": {
+      "get": {
+        "summary": "Get categories by restaurant ID",
+        "tags": ["Category"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categories retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/admin/ingredients/category": {
+      "post": {
+        "summary": "Create a new ingredient category",
+        "tags": ["Admin - Ingredients"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "restaurant"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "restaurant": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ingredient category created successfully"
+          }
+        }
+      }
+    },
+    "/api/admin/ingredients": {
+      "post": {
+        "summary": "Create a new ingredient",
+        "tags": ["Admin - Ingredients"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "category",
+                  "restaurant",
+                  "stock"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "restaurant": {
+                    "type": "string"
+                  },
+                  "stock": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ingredient created successfully"
+          }
+        }
+      }
+    },
+    "/api/admin/ingredients/{id}/stock": {
+      "put": {
+        "summary": "Update ingredient stock",
+        "tags": ["Admin - Ingredients"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "stock"
+                ],
+                "properties": {
+                  "stock": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ingredient stock updated successfully"
+          }
+        }
+      }
+    },
+    "/api/admin/ingredients/restaurant/{id}": {
+      "get": {
+        "summary": "Get ingredients by restaurant ID",
+        "tags": ["Admin - Ingredients"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ingredients retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/admin/ingredients/restaurant/{id}/category": {
+      "get": {
+        "summary": "Get ingredient categories by restaurant ID",
+        "tags": ["Admin - Ingredients"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ingredient categories retrieved successfully"
+          }
+        }
+      }
+    }
+  }
+} 

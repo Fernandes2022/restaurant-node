@@ -26,61 +26,17 @@
 // server.js
 const { app } = require("./index"); // Assuming index.js exports the Express app
 const connectDB = require("./config/db"); // This function should return a Promise
-const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const path = require('path');
 const express = require('express');
+const swaggerDocument = require('./docs/swagger.json');
 
 // Use a variable to hold the connection promise
 let dbConnectionPromise = null;
 
-// Swagger Configuration
-const swaggerOptions = {
-  swaggerDefinition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Restaurant API',
-      version: '1.0.0',
-      description: 'API for restaurant platform',
-    },
-    servers: [
-      { url: 'http://localhost:3000', description: 'Local server' },
-      {
-        url: process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : 'https://timi-restaurant-node.vercel.app',
-        description: 'Production server',
-      },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
-    },
-    security: [{ bearerAuth: [] }],
-  },
-  apis: [path.join(__dirname, 'docs', 'swaggerDocs.js')],
-};
-
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-
-// Serve Swagger UI assets
-const swaggerUiAssetPath = path.join(__dirname, '../node_modules/swagger-ui-dist');
-app.use('/api-docs', express.static(swaggerUiAssetPath));
-
-// Serve Swagger JSON
-app.get('/api-docs/swagger.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerDocs);
-});
-
-// Setup Swagger UI
+// Setup Swagger UI with a single configuration
 app.use('/api-docs', swaggerUi.serve);
-app.get('/api-docs', swaggerUi.setup(swaggerDocs, {
+app.get('/api-docs', swaggerUi.setup(swaggerDocument, {
   explorer: true,
   customSiteTitle: 'Restaurant API Documentation',
   swaggerOptions: {
