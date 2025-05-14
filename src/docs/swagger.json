@@ -160,7 +160,13 @@
         "properties": {
           "orderStatus": {
             "type": "string",
-            "enum": ["PENDING", "COMPLETED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"]
+            "enum": [
+              "PENDING",
+              "COMPLETED",
+              "OUT_FOR_DELIVERY",
+              "DELIVERED",
+              "CANCELLED"
+            ]
           },
           "totalAmount": {
             "type": "number"
@@ -211,14 +217,16 @@
   },
   "security": [
     {
-      "bearerAuth": []
+      "Bearer": []
     }
   ],
   "paths": {
     "/auth/signup": {
       "post": {
         "summary": "Register a new user",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -259,7 +267,9 @@
     "/auth/signin": {
       "post": {
         "summary": "Log in a user",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -292,7 +302,9 @@
     "/auth/forgot-password": {
       "post": {
         "summary": "Request password reset",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -318,7 +330,9 @@
     "/auth/reset-password/{token}": {
       "post": {
         "summary": "Reset user password",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -354,7 +368,9 @@
     "/api/user/profile": {
       "get": {
         "summary": "Get authenticated user's profile",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -388,7 +404,9 @@
     "/api/restaurants": {
       "get": {
         "summary": "Get all restaurants",
-        "tags": ["Customer Restaurants"],
+        "tags": [
+          "Customer Restaurants"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -439,7 +457,9 @@
       },
       "post": {
         "summary": "Create a new restaurant",
-        "tags": ["Restaurants"],
+        "tags": [
+          "Restaurants"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -465,7 +485,9 @@
     "/api/restaurants/search": {
       "get": {
         "summary": "Search restaurants",
-        "tags": ["Customer Restaurants"],
+        "tags": [
+          "Customer Restaurants"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -486,7 +508,9 @@
     "/api/restaurants/myrestaurant": {
       "get": {
         "summary": "Get restaurant by user ID",
-        "tags": ["Restaurants"],
+        "tags": [
+          "Restaurants"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -502,7 +526,9 @@
     "/api/restaurants/{id}": {
       "get": {
         "summary": "Get restaurant by ID",
-        "tags": ["Customer Restaurants"],
+        "tags": [
+          "Customer Restaurants"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -528,7 +554,9 @@
       },
       "put": {
         "summary": "Update restaurant details",
-        "tags": ["Restaurants"],
+        "tags": [
+          "Restaurants"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -562,7 +590,9 @@
       },
       "delete": {
         "summary": "Delete restaurant",
-        "tags": ["Restaurants"],
+        "tags": [
+          "Restaurants"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -588,7 +618,9 @@
     "/api/restaurants/favourite/{id}": {
       "post": {
         "summary": "Add restaurant to favorites",
-        "tags": ["Customer Restaurants"],
+        "tags": [
+          "Customer Restaurants"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -614,7 +646,9 @@
     "/api/restaurants/rate/{id}": {
       "post": {
         "summary": "Rate a restaurant",
-        "tags": ["Customer Restaurants"],
+        "tags": [
+          "Customer Restaurants"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -655,7 +689,9 @@
     "/api/food": {
       "post": {
         "summary": "Create a new food item",
-        "tags": ["Food (Admin)"],
+        "tags": [
+          "Food (Admin)"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -714,7 +750,9 @@
     "/api/food/search": {
       "get": {
         "summary": "Search food items",
-        "tags": ["Food (Customer)"],
+        "tags": [
+          "Food (Customer)"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -735,7 +773,9 @@
     "/api/food/restaurant/{restaurantId}": {
       "get": {
         "summary": "Get all food items for a restaurant",
-        "tags": ["Food (Customer)"],
+        "tags": [
+          "Food (Customer)"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -756,7 +796,9 @@
     "/api/food/{id}": {
       "delete": {
         "summary": "Delete a food item",
-        "tags": ["Food (Admin)"],
+        "tags": [
+          "Food (Admin)"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -780,7 +822,9 @@
       },
       "put": {
         "summary": "Update food item availability",
-        "tags": ["Food (Admin)"],
+        "tags": [
+          "Food (Admin)"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -821,7 +865,9 @@
     "/api/order": {
       "post": {
         "summary": "Create a new order",
-        "tags": ["Order (User)"],
+        "tags": [
+          "Order (User)"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -847,7 +893,9 @@
     "/api/order/user": {
       "get": {
         "summary": "Get user's orders",
-        "tags": ["Order (User)"],
+        "tags": [
+          "Order (User)"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -863,7 +911,9 @@
     "/api/orders/restaurant/{restaurantId}": {
       "get": {
         "summary": "Get all orders for a restaurant",
-        "tags": ["Order (Restaurant)"],
+        "tags": [
+          "Order (Restaurant)"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -889,7 +939,9 @@
     "/api/order/{orderId}": {
       "delete": {
         "summary": "Cancel an order",
-        "tags": ["Order (Restaurant)"],
+        "tags": [
+          "Order (Restaurant)"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -915,7 +967,9 @@
     "/api/order/{orderId}/{orderStatus}": {
       "put": {
         "summary": "Update order status",
-        "tags": ["Order (Restaurant)"],
+        "tags": [
+          "Order (Restaurant)"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -936,7 +990,13 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["PENDING", "COMPLETED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"]
+              "enum": [
+                "PENDING",
+                "COMPLETED",
+                "OUT_FOR_DELIVERY",
+                "DELIVERED",
+                "CANCELLED"
+              ]
             }
           }
         ],
@@ -950,7 +1010,9 @@
     "/api/cart": {
       "get": {
         "summary": "Get cart items",
-        "tags": ["Cart"],
+        "tags": [
+          "Cart"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -966,7 +1028,9 @@
     "/api/cart/add": {
       "put": {
         "summary": "Add item to cart",
-        "tags": ["Cart"],
+        "tags": [
+          "Cart"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1004,7 +1068,9 @@
     "/api/cart/total": {
       "get": {
         "summary": "Calculate cart total",
-        "tags": ["Cart"],
+        "tags": [
+          "Cart"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1020,7 +1086,9 @@
     "/api/cart/clear": {
       "put": {
         "summary": "Clear cart",
-        "tags": ["Cart"],
+        "tags": [
+          "Cart"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1036,7 +1104,9 @@
     "/api/cart-item/update": {
       "put": {
         "summary": "Update cart item quantity",
-        "tags": ["Cart"],
+        "tags": [
+          "Cart"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1074,7 +1144,9 @@
     "//api/cart-item/{id}/remove": {
       "delete": {
         "summary": "Remove item from cart",
-        "tags": ["Cart"],
+        "tags": [
+          "Cart"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1100,7 +1172,9 @@
     "/api/contact": {
       "post": {
         "summary": "Send contact form message",
-        "tags": ["Contact"],
+        "tags": [
+          "Contact"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1137,7 +1211,9 @@
     "/api/events": {
       "get": {
         "summary": "Get all events",
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "responses": {
           "200": {
             "description": "List of events retrieved successfully"
@@ -1148,7 +1224,9 @@
     "/api/events/restaurant/{restaurantId}": {
       "post": {
         "summary": "Create a new event",
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1199,7 +1277,9 @@
       },
       "get": {
         "summary": "Get restaurant events",
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1220,7 +1300,9 @@
     "/api/events/{id}": {
       "delete": {
         "summary": "Delete an event",
-        "tags": ["Events"],
+        "tags": [
+          "Events"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1246,7 +1328,9 @@
     "/api/admin/category": {
       "post": {
         "summary": "Create a new category",
-        "tags": ["Category"],
+        "tags": [
+          "Category"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1284,7 +1368,9 @@
     "/api/admin/category/restaurant/{id}": {
       "get": {
         "summary": "Get categories by restaurant ID",
-        "tags": ["Category"],
+        "tags": [
+          "Category"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1310,7 +1396,9 @@
     "/api/admin/ingredients/category": {
       "post": {
         "summary": "Create a new ingredient category",
-        "tags": ["Admin - Ingredients"],
+        "tags": [
+          "Admin - Ingredients"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1348,7 +1436,9 @@
     "/api/admin/ingredients": {
       "post": {
         "summary": "Create a new ingredient",
-        "tags": ["Admin - Ingredients"],
+        "tags": [
+          "Admin - Ingredients"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1394,7 +1484,9 @@
     "/api/admin/ingredients/{id}/stock": {
       "put": {
         "summary": "Update ingredient stock",
-        "tags": ["Admin - Ingredients"],
+        "tags": [
+          "Admin - Ingredients"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1438,7 +1530,9 @@
     "/api/admin/ingredients/restaurant/{id}": {
       "get": {
         "summary": "Get ingredients by restaurant ID",
-        "tags": ["Admin - Ingredients"],
+        "tags": [
+          "Admin - Ingredients"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1464,7 +1558,9 @@
     "/api/admin/ingredients/restaurant/{id}/category": {
       "get": {
         "summary": "Get ingredient categories by restaurant ID",
-        "tags": ["Admin - Ingredients"],
+        "tags": [
+          "Admin - Ingredients"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1487,5 +1583,19 @@
         }
       }
     }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+    }
   }
-} 
+}
