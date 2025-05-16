@@ -1,9 +1,8 @@
 const mongoose = require('mongoose')
-
-const mongodbUrl="mongodb+srv://jelilirokeebadeyeye:qVxIqGLyAAcFc9JX@cluster0.gejwg.mongodb.net/Restaurant-Node?retryWrites=true&w=majority&appName=Cluster0"
+require('dotenv').config();
 
 async function connectDB() {
-   return mongoose.connect(mongodbUrl, {
+   return mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       maxPoolSize: 10,

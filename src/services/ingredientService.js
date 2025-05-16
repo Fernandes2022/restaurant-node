@@ -2,29 +2,32 @@ const IngredientCategory = require('../model/ingredientCategory.model.js')
 const IngredientsItem = require('../model/ingredientsItem.model.js')
 const Restaurant = require('../model/restaurant.model.js')
 
-const createIngredientCategory = async(name, restaurantId) => {
+const createIngredientCategory = async(name, userId) => {
   try {
-   let category = await IngredientCategory.findOne({
-    restaurant: restaurantId,
-    name: name,
-   });
+    // First find the restaurant
+    const restaurant = await Restaurant.findOne({owner: userId});
+    if(!restaurant){
+      throw new Error('Restaurant not found for this user');
+    }
 
-   if(category){
-    return category;
-   }
+    // Then check if category exists
+    let category = await IngredientCategory.findOne({
+      restaurant: restaurant._id,
+      name: name,
+    });
 
-   const restaurant = await Restaurant.findById(restaurantId);
-   if(!restaurant){
-    throw new Error(`Restaurant not found with Id ${restaurantId}`);
-   }
+    if(category){
+      return category;
+    }
 
-   category = new IngredientCategory({
-    name: name,
-    restaurant: restaurantId,
-   })
+    // Create new category
+    category = new IngredientCategory({
+      name: name,
+      restaurant: restaurant._id,
+    });
 
-   const createdCategory = await category.save();
-   return createdCategory;
+    const createdCategory = await category.save();
+    return createdCategory;
   } catch (error) {
     throw new Error(`Error creating ingredient category: ${error.message}`);
   }
@@ -62,9 +65,10 @@ const findRestaurantsIngredients = async(restaurantId) => {
 }
 
 
-const createIngredientItem = async(ingredientName, ingredientCategoryId, restaurantId) => {
+const createIngredientItem = async(ingredientName, ingredientCategoryId, userId) => {
   try {
     const category = await findIngredientCategoryById(ingredientCategoryId);
+    const restaurants = await Restaurant.findOne({owner: userId});
     if(!category){
       throw new Error(`Ingredient category not found with Id ${ingredientCategoryId}`);
     }
@@ -72,7 +76,7 @@ const createIngredientItem = async(ingredientName, ingredientCategoryId, restaur
       let item = await IngredientsItem.findOne({
         name: ingredientName,
         category: category._id,
-        restaurant: restaurantId,
+        restaurant: restaurants._id,
       });
 
       if(item){
@@ -82,7 +86,7 @@ const createIngredientItem = async(ingredientName, ingredientCategoryId, restaur
       item = new IngredientsItem({
         name: ingredientName,
         category: category._id,
-        restaurant: restaurantId,
+        restaurant: restaurants._id,
       });
 
       const savedItem = await item.save();

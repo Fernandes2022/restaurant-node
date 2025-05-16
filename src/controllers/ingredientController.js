@@ -11,8 +11,9 @@ const {
 
 const createIngredientCategoryController = async(req, res) => {
   try {
-    const { name, restaurantId } = req.body;
-    const items = await createIngredientCategory(name, restaurantId);
+    const user = req.user;
+    const { name } = req.body;
+    const items = await createIngredientCategory(name, user._id);
     res.status(200).json(items);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -22,8 +23,9 @@ const createIngredientCategoryController = async(req, res) => {
 
 const createIngredientItemController = async(req, res) => {
   try {
-    const { name, ingredientCategoryId, restaurantId } = req.body;
-    const item = await createIngredientItem(name, ingredientCategoryId, restaurantId);
+    const { name, ingredientCategoryId } = req.body;
+    const user = req.user;
+    const item = await createIngredientItem(name, ingredientCategoryId, user._id);
     res.status(200).json(item);
   } catch (error) {
     res.status(500).json({ error: true, message: error.message });

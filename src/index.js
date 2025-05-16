@@ -15,7 +15,7 @@ app.use(express.json());
 const homeRouter = require('./routers/homeRoute');
 const authRouters = require('./routers/authRouters');
 const userRouters = require('./routers/userRoute');
-const restaurantRouters = require('./routes/restaurant.routes');
+const restaurantRouters = require('./routers/restaurantRoute');
 const orderRouters = require('./routers/orderRoute');
 const foodRouters = require('./routers/foodRoute');
 const adminOrderRouters = require('./routers/adminOrderRoute');
@@ -27,7 +27,7 @@ const adminIngredientRouters = require('./routers/adminIngredientRoute');
 const adminEventRouters = require('./routers/adminEventRoute');
 const eventRouters = require('./routers/eventRoute');
 const adminFoodRouters = require('./routers/adminFoodRoute');
-const messageRouters = require('./routers/message.routes');
+const messageRouters = require('./routers/messageRoute');
 
 // Use Routers
 app.use('/', homeRouter);

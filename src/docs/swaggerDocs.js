@@ -410,7 +410,7 @@
 /**
  * @swagger
  * /api/restaurants/{id}/add-favourites:
- *   get:
+ *  post:
  *     summary: Add or remove a restaurant from user's favourites
  *     tags: [Restaurants]
  *     security:
@@ -746,7 +746,7 @@
  *               price:
  *                 type: number
  *                 example: 2500
- *               fooCategory:
+ *               foodCategory:
  *                 type: string
  *                 example: "661234abc123abc123abc123"  # ObjectId of category
  *               ingredients:
