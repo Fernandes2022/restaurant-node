@@ -11,7 +11,7 @@
       "description": "Development server"
     },
     {
-      "url": "https://timi-restaurant-node.vercel.app/",
+      "url": "https://timi-restaurant-node.vercel.app",
       "description": "Deployed server"
     }
   ],
