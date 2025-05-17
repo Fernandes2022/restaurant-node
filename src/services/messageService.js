@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+require('dotenv').config();
+
 
 const sendContactMessage = async (messageData) => {
     try {
