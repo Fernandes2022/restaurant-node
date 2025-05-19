@@ -4,6 +4,9 @@ require('dotenv').config();
 
 const sendContactMessage = async (messageData) => {
     try {
+        console.log('EMAIL:', process.env.EMAIL);
+console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'Exists' : 'Missing');
+
         // Create transporter (production-safe Gmail config)
         const transporter = nodemailer.createTransport({
             service: 'gmail',
