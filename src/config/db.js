@@ -1,6 +1,12 @@
 const mongoose = require('mongoose')
 require('dotenv').config();
 
+const MONGODB_URI = process.env.MONGO_URI;
+
+if (!MONGODB_URI) {
+    throw new Error('Please define the MONGO_URI environment variable');
+}
+
 let cached = global.mongoose;
 
 if (!cached) {
@@ -14,20 +20,32 @@ async function connectDB() {
 
     if (!cached.promise) {
         const opts = {
-            maxPoolSize: 10,
-            serverSelectionTimeoutMS: 5000,
+            bufferCommands: false, // Disable mongoose buffering
+            maxPoolSize: 1, // Reduce pool size for serverless
+            minPoolSize: 0, // Allow the pool to be empty
+            serverSelectionTimeoutMS: 5000, // Faster timeout for serverless
             socketTimeoutMS: 45000,
+            connectTimeoutMS: 10000,
             family: 4,
             useNewUrlParser: true,
             useUnifiedTopology: true,
             retryWrites: true,
-            w: 'majority'
+            w: 'majority',
+            heartbeatFrequencyMS: 10000,
+            retryReads: true,
+            keepAlive: true,
+            keepAliveInitialDelay: 300000
         };
 
-        cached.promise = mongoose.connect(process.env.MONGO_URI, opts)
+        cached.promise = mongoose.connect(MONGODB_URI, opts)
             .then((mongoose) => {
                 console.log('MongoDB Connected Successfully');
                 return mongoose;
+            })
+            .catch((err) => {
+                console.error('MongoDB connection error:', err);
+                cached.promise = null;
+                throw err;
             });
     }
 
@@ -40,6 +58,20 @@ async function connectDB() {
     }
 
     return cached.conn;
+}
+
+// Handle Vercel serverless function cleanup
+if (process.env.NODE_ENV === 'production') {
+    process.on('SIGTERM', async () => {
+        try {
+            await mongoose.connection.close();
+            console.log('MongoDB connection closed through app termination');
+            process.exit(0);
+        } catch (err) {
+            console.error('Error during MongoDB connection closure:', err);
+            process.exit(1);
+        }
+    });
 }
 
 module.exports = connectDB;
