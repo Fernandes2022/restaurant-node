@@ -33,8 +33,22 @@ app.use(async (req, res, next) => {
   } catch (error) {
     console.error('Database connection error:', error);
     dbConnectionPromise = null;
-    res.status(503).send('Service Unavailable: DB connection failed');
+    res.status(503).json({
+      error: 'Service Unavailable',
+      message: 'Database connection failed',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: 'An unexpected error occurred',
+    details: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
 });
 
 // Local dev server

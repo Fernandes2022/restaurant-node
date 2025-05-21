@@ -20,7 +20,7 @@ async function connectDB() {
 
     if (!cached.promise) {
         const opts = {
-            bufferCommands: true, // Changed to true to fix the connection issue
+            bufferCommands: true,
             maxPoolSize: 1,
             minPoolSize: 0,
             serverSelectionTimeoutMS: 5000,
@@ -32,9 +32,7 @@ async function connectDB() {
             retryWrites: true,
             w: 'majority',
             heartbeatFrequencyMS: 10000,
-            retryReads: true,
-            keepAlive: true,
-            keepAliveInitialDelay: 300000
+            retryReads: true
         };
 
         cached.promise = mongoose.connect(MONGODB_URI, opts)
