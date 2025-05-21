@@ -20,10 +20,10 @@ async function connectDB() {
 
     if (!cached.promise) {
         const opts = {
-            bufferCommands: false, // Disable mongoose buffering
-            maxPoolSize: 1, // Reduce pool size for serverless
-            minPoolSize: 0, // Allow the pool to be empty
-            serverSelectionTimeoutMS: 5000, // Faster timeout for serverless
+            bufferCommands: true, // Changed to true to fix the connection issue
+            maxPoolSize: 1,
+            minPoolSize: 0,
+            serverSelectionTimeoutMS: 5000,
             socketTimeoutMS: 45000,
             connectTimeoutMS: 10000,
             family: 4,
