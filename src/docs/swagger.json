@@ -880,9 +880,9 @@
         "summary": "Search restaurants",
         "parameters": [
           {
-            "name": "query",
+            "name": "keyword",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -940,7 +940,7 @@
         "summary": "Search food items",
         "parameters": [
           {
-            "name": "query",
+            "name": "keyword",
             "in": "query",
             "required": true,
             "schema": {
