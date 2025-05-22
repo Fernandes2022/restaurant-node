@@ -215,7 +215,7 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "confirmed", "preparing", "ready", "delivered", "cancelled"]
+            "enum": ["PENDING", "COMPLETED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"]
           },
           "totalAmount": {
             "type": "number"
@@ -1014,24 +1014,32 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["restaurantId", "items"],
+                "required": ["restaurantId", "deliveryAddress"],
                 "properties": {
                   "restaurantId": {
                     "type": "string"
                   },
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": ["foodId", "quantity"],
-                      "properties": {
-                        "foodId": {
-                          "type": "string"
-                        },
-                        "quantity": {
-                          "type": "integer",
-                          "minimum": 1
-                        }
+                  "deliveryAddress": {
+                    "type": "object",
+                    "required": ["streetAddress", "city", "state", "country", "postalCode", "fullName"],
+                    "properties": {
+                      "streetAddress": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "type": "string"
+                      },
+                      "postalCode": {
+                        "type": "string"
+                      },
+                      "fullName": {
+                        "type": "string"
                       }
                     }
                   }
@@ -1463,7 +1471,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["confirmed", "preparing", "ready", "delivered", "cancelled"]
+              "enum": ["PENDING", "COMPLETED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"]
             }
           }
         ],
