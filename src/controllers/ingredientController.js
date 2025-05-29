@@ -45,7 +45,7 @@ const updateStockController = async(req, res) => {
 
 const findRestaurantIngredientsController = async(req, res) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
     const items = await findRestaurantsIngredients(id);
     res.status(200).json(items);
   } catch (error) {

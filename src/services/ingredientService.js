@@ -55,14 +55,6 @@ const findIngredientCategoryByRestaurantId = async(restaurantId) => {
   }
 }
 
-const findRestaurantsIngredients = async(restaurantId) => {
-  try {
-  const items = await IngredientsItem.find({restaurant: restaurantId}).populate('category');
-  return items;
-  } catch (error) {
-    throw new Error(`Failed to find ingredients items with Id ${restaurantId}`);
-  }
-}
 
 
 const createIngredientItem = async(ingredientName, ingredientCategoryId, userId) => {
@@ -96,6 +88,17 @@ const createIngredientItem = async(ingredientName, ingredientCategoryId, userId)
       
   } catch (error) {
     throw new Error(`Error creating ingredient item: ${error.message}`);
+  }
+}
+
+
+const findRestaurantsIngredients = async(Id) => {
+  try {
+    
+  const items = await IngredientsItem.find({category: Id}).populate('category');
+  return items;
+  } catch (error) {
+    throw new Error(`Failed to find ingredients items with Id ${restaurantId}`);
   }
 }
 

@@ -15,7 +15,7 @@ const {
 
 
 router.delete('/:orderId', authenticate, cancelOrderController);
-router.get('/restaurant/:restaurantId', authenticate, getOrdersOfRestaurantController);
+router.get('/restaurant', authenticate, getOrdersOfRestaurantController);
 router.put('/:orderId/:orderStatus', authenticate, updateOrderStatusController);
 
 

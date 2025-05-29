@@ -6,7 +6,7 @@ const IngredientCategorySchema = new mongoose.Schema({
   type: mongoose.Schema.Types.ObjectId,
   ref: 'Restaurant',
  },
- ingredients: [{
+ ingredients: [{ 
   type: mongoose.Schema.Types.ObjectId,
   ref: 'IngredientsItem',
  }]

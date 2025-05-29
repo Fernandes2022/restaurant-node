@@ -64,10 +64,10 @@ const cancelOrderController = async (req, res) => {
 
 const getOrdersOfRestaurantController = async (req, res) => {
   try {
-      const {restaurantId} = req.params;
+      const user = req.user;
       const {order_status} = req.query;
 
-      const orders = await getOrdersOfRestaurant(restaurantId, order_status);
+      const orders = await getOrdersOfRestaurant(user._id, order_status);
       res.status(200).json(orders);
   } catch (error) {
     if(error instanceof Error) {

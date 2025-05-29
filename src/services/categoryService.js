@@ -22,12 +22,13 @@ const createCategory = async (name, userId) => {
 }
 
 
-const findCategoryByRestaurantId = async (restaurantId) => {
+const findCategoryByRestaurantId = async (userId) => {
   try {
-    const categories = await Category.find({restaurant: restaurantId});
+    const restaurant = await Restaurant.findOne({owner: userId});
+    const categories = await Category.find({restaurant: restaurant._id});
     return categories;
   } catch (error) {
-    throw new Error(`Failed to find categories for restaurant with Id: ${restaurantId}: ${error.message}`);
+    throw new Error(`Failed to find categories for restaurant Id: ${error.message}`);
   }
 }
 

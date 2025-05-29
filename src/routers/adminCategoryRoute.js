@@ -3,8 +3,10 @@ const router = express.Router();
 const {authenticate} = require('../middleware/authentication');
 
 
-const {createCategoryController, findCategoryByRestaurantIdController} = require('../controller/categoryController');
+const {createCategoryController, findCategoryByRestaurantIdController} = require('../controllers/categoryController');
 
 
 router.post('/', authenticate, createCategoryController);
-router.get('/restaurant/:id', authenticate, findCategoryByRestaurantIdController);
+router.get('/restaurant', authenticate, findCategoryByRestaurantIdController);
+
+module.exports = router;

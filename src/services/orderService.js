@@ -107,9 +107,10 @@ const getUserOrders = async (userId) => {
   }
 }
 
-const getOrdersOfRestaurant = async (restaurantId, orderStatus) => {
+const getOrdersOfRestaurant = async (userId, orderStatus) => {
   try {
-    let orders = await Order.find({restaurant: restaurantId});
+    const restaurant = await Restaurant.findOne({owner: userId});
+    let orders = await Order.find({restaurant: restaurant._id});
     if(orderStatus) {
       orders = orders.filter(order => order.orderStatus === orderStatus);
     }

@@ -20,8 +20,8 @@ const createCategoryController = async (req, res) => {
 
 const findCategoryByRestaurantIdController = async (req, res) => {
   try {
-       const {id} = req.params;
-       const categories = await findCategoryByRestaurantId(id);
+       const user = req.user;
+       const categories = await findCategoryByRestaurantId(user._id);
        res.status(200).json(categories);
   } catch (error) {
     if(error instanceof Error) {
