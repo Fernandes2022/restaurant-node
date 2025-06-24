@@ -1,4 +1,4 @@
-const {createCategory, findCategoryByRestaurantId, findCategoryById} = require('../services/categoryService');
+const {createCategory, findCategoryByRestaurantId, findCategoryByRestaurantIds, findCategoryById} = require('../services/categoryService');
 const {getUserById} = require('../services/userServices');
 
 const createCategoryController = async (req, res) => {
@@ -32,9 +32,23 @@ const findCategoryByRestaurantIdController = async (req, res) => {
   }
 }
 
+const findCategoryByRestaurantIdControllers = async (req, res) => {
+  try {
+       const {id} = req.params;
+       const categories = await findCategoryByRestaurantIds(id);
+       res.status(200).json(categories);
+  } catch (error) {
+    if(error instanceof Error) {
+      res.status(400).json({error: error.message});
+    } else {
+      res.status(500).json({error: 'Internal server error'});
+    }
+  }
+}
+
 
 module.exports = {
   createCategoryController,
-  findCategoryByRestaurantIdController
+  findCategoryByRestaurantIdController,
+  findCategoryByRestaurantIdControllers,
 }
-

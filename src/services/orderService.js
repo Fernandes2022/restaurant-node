@@ -116,7 +116,7 @@ const getOrdersOfRestaurant = async (userId, orderStatus) => {
     }
     return orders;
   } catch (error) {
-    throw new Error(`failed to get orders of restaurant with Id: ${restaurantId}: ${error.message}`);
+    throw new Error(`failed to get orders of restaurant : ${error.message}`);
   }
 }
 

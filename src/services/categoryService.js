@@ -31,6 +31,15 @@ const findCategoryByRestaurantId = async (userId) => {
     throw new Error(`Failed to find categories for restaurant Id: ${error.message}`);
   }
 }
+const findCategoryByRestaurantIds = async (id) => {
+  try {
+    
+    const categories = await Category.find({restaurant: id});
+    return categories;
+  } catch (error) {
+    throw new Error(`Failed to find categories for restaurant Id: ${error.message}`);
+  }
+}
 
 const findCategoryById = async (categoryId) => {
   try {
@@ -48,5 +57,6 @@ const findCategoryById = async (categoryId) => {
 module.exports = {
   createCategory,
   findCategoryByRestaurantId,
+  findCategoryByRestaurantIds,
   findCategoryById,
 }
