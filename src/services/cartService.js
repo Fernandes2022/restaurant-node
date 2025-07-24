@@ -53,43 +53,49 @@ const findCartByUserId = async (userId) => {
 
 const addItemToCart = async (req, userId) => {
   try {
-    // First check if cart exists, if not create one
-    let cart = await Cart.findOne({customer: userId});
+    // Find or create cart
+    let cart = await Cart.findOne({ customer: userId });
     if (!cart) {
       cart = await createCart(userId);
     }
 
-    // Check if food item exists
+    // Verify food exists
     const food = await Food.findById(req.menuItemId);
     if (!food) {
       throw new Error(`Food item not found with ID: ${req.menuItemId}`);
     }
 
-    // Check if item already exists in cart
-    const isPresent = await CartItem.findOne({
+    // Check if item already exists in the cart
+    const existingItem = await CartItem.findOne({
       cart: cart._id,
       food: food._id,
     });
 
-    if (!isPresent) {
-      const cartItem = new CartItem({
-        food: food._id,
-        cart: cart._id,
-        quantity: 1,
-        totalPrice: food.price,
-      });
-
-      const createdCartItem = await cartItem.save();
-      cart.items.push(createdCartItem._id);
-      await cart.save();
-      return createdCartItem;
+    if (existingItem) {
+      return existingItem;
     }
- 
-    return isPresent;
+
+    // Create new cart item
+    const newCartItem = await CartItem.create({
+      cart: cart._id,
+      food: food._id,
+      quantity: 1,
+      totalPrice: food.price,
+    });
+
+    // Safely push the item to the cart's items array
+    await Cart.findByIdAndUpdate(
+      cart._id,
+      { $addToSet: { items: newCartItem._id } }, // $addToSet prevents accidental duplicates
+      { new: true }
+    );
+
+    return newCartItem;
   } catch (error) {
     throw new Error(`Failed to add item to cart: ${error.message}`);
   }
-}
+};
+
 
 
 const updateCartQuantity = async (cartItemId, quantity) => {
