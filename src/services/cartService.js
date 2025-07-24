@@ -53,19 +53,16 @@ const findCartByUserId = async (userId) => {
 
 const addItemToCart = async (req, userId) => {
   try {
-    // Find or create cart
     let cart = await Cart.findOne({ customer: userId });
     if (!cart) {
       cart = await createCart(userId);
     }
 
-    // Verify food exists
     const food = await Food.findById(req.menuItemId);
     if (!food) {
       throw new Error(`Food item not found with ID: ${req.menuItemId}`);
     }
 
-    // Check if item already exists in the cart
     const existingItem = await CartItem.findOne({
       cart: cart._id,
       food: food._id,
@@ -75,7 +72,6 @@ const addItemToCart = async (req, userId) => {
       return existingItem;
     }
 
-    // Create new cart item
     const newCartItem = await CartItem.create({
       cart: cart._id,
       food: food._id,
@@ -83,10 +79,9 @@ const addItemToCart = async (req, userId) => {
       totalPrice: food.price,
     });
 
-    // Safely push the item to the cart's items array
     await Cart.findByIdAndUpdate(
       cart._id,
-      { $addToSet: { items: newCartItem._id } }, // $addToSet prevents accidental duplicates
+      { $addToSet: { items: newCartItem._id } },
       { new: true }
     );
 
@@ -121,27 +116,34 @@ const updateCartQuantity = async (cartItemId, quantity) => {
 
 
 const removeItemFromCart = async (cartItemId, user) => {
-   const cart = await Cart.findOne({customer: user._id});
-   if(!cart) {
-    throw new Error(`Cart not found: ${user._id}`);
-   }
-
-   cart.items = cart.items.filter((item) => !item.equals(cartItemId));
-   await cart.save();
-   return cart;
-}
-
-const clearCart = async (user) => {
-  const cart = await Cart.findOne({customer: user._id});
-
-  if(!cart) {
+  const cart = await Cart.findOne({ customer: user._id });
+  if (!cart) {
     throw new Error(`Cart not found: ${user._id}`);
   }
 
+  cart.items = cart.items.filter((item) => !item.equals(cartItemId));
+  await cart.save();
+
+  await CartItem.deleteOne({ _id: cartItemId });
+
+  return cart;
+};
+
+
+const clearCart = async (user) => {
+  const cart = await Cart.findOne({ customer: user._id });
+  if (!cart) {
+    throw new Error(`Cart not found: ${user._id}`);
+  }
+
+  await CartItem.deleteMany({ cart: cart._id });
+
   cart.items = [];
   await cart.save();
+
   return cart;
-}
+};
+
 
 const calculateCartTotal = async (cart) => {
  try {
