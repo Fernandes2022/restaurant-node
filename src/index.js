@@ -11,23 +11,30 @@ const app = express();
 
 // Middleware
 
-
 const allowedOrigins = [
- 'http://localhost:5173',
- 'http://localhost:5174',
- 'https://nutric.vercel.app' // your deployed frontend URL
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://nutric.vercel.app',
+  'https://timi-restaurant-node.vercel.app' // this is for Swagger UI hosted on same server
 ];
 
 app.use(cors({
- origin: function (origin, callback) {
-   if (!origin || allowedOrigins.includes(origin)) {
-     callback(null, true);
-   } else {
-     callback(new Error('Not allowed by CORS'));
-   }
- },
- credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS blocked: ${origin}`);
+      callback(null, false); // don't throw error
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Optional: explicitly handle preflight OPTIONS requests
+app.options('*', cors());
+
 
 app.use(bodyParser.json());
 app.use(express.json());
