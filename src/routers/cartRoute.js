@@ -8,7 +8,7 @@ const {
   findUserCart,
   calculateCartTotalController,
   clearingCart,
-  setDeliveryType
+  deliveryTypeController
 } = require('../controllers/cartController');
 
 
@@ -16,7 +16,7 @@ router.put('/add', authenticate, addToCart);
 router.get('/total', authenticate, calculateCartTotalController);
 router.get('/', authenticate, findUserCart);
 router.put('/clear', authenticate, clearingCart);
-router.put('/delivery-type', authenticate, setDeliveryType);
+router.put('/delivery-type', authenticate, deliveryTypeController);
 
 module.exports = router;
 

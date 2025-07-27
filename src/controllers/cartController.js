@@ -89,7 +89,7 @@ const clearingCart = async (req, res) => {
   }
 }
 
-const setDeliveryType = async (req, res) => {
+const deliveryTypeController = async (req, res) => {
 
   try {
     const user = req.user;
@@ -112,7 +112,7 @@ const setDeliveryType = async (req, res) => {
   findUserCart,
   clearingCart,
   calculateCartTotalController,
-  setDeliveryType
+  deliveryTypeController
 }
 
 
