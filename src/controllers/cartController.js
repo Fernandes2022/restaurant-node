@@ -1,4 +1,4 @@
-const {createCart, findCartByUserId, addItemToCart, updateCartQuantity, removeItemFromCart, clearCart, calculateCartTotal} = require('../services/cartService');
+const {createCart, findCartByUserId, addItemToCart, updateCartQuantity, removeItemFromCart, clearCart, calculateCartTotal, setDeliveryType} = require('../services/cartService');
 
 const {findUserById, findUserProfileByJwt} = require('../services/userServices');
 
@@ -89,13 +89,30 @@ const clearingCart = async (req, res) => {
   }
 }
 
-module.exports = {
+const setDeliveryType = async (req, res) => {
+
+  try {
+    const user = req.user;
+    const {type} = req.body;
+    const cart = await setDeliveryType(user._id.toString(), type);
+    res.status(200).json(cart);
+  } catch (error) {
+    if(error instanceof Error) {
+      res.status(400).json({error: error.message});
+    } else {
+      res.status(500).json({error: "Internal server error"});
+    }
+  }
+}
+
+  module.exports = {
   addToCart,
   updateCartItemQuantity,
   removeFromCart,
   findUserCart,
   clearingCart,
-  calculateCartTotalController
+  calculateCartTotalController,
+  setDeliveryType
 }
 
 

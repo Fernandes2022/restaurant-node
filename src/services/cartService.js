@@ -29,24 +29,21 @@ const findCartByUserId = async (userId) => {
   console.log(cart.items);
 
   let totalPrice = 0;
-  let totalDiscountedPrice = 0;
-  let totalItems = 0;
+let totalItems = 0;
 
-  for (let item of cart.items) {
-    totalPrice += Number(item.totalPrice) || 0;
-    totalDiscountedPrice += Number(item.discountedPrice) || 0;
-    totalItems += Number(item.quantity) || 0;
-  }
+for (let item of cart.items) {
+  totalPrice += Number(item.totalPrice) || 0;
+  totalItems += Number(item.quantity) || 0;
+}
 
-  cart.totalPrice = totalPrice;
-  cart.totalDiscountedPrice = totalDiscountedPrice;
-  cart.totalItems = totalItems;
+cart.totalPrice = totalPrice;
+cart.totalItems = totalItems;
 
-  const discount = totalPrice - totalDiscountedPrice;
-  cart.discount = isNaN(discount) ? 0 : discount;
+cart.total = totalPrice + (cart.deliveryFee || 0);
 
-  await cart.save();
-  return cart;
+await cart.save();
+return cart;
+
 };
 
 
@@ -153,11 +150,28 @@ const calculateCartTotal = async (cart) => {
    total += cartItem.food.price * cartItem.quantity;
   }
 
+  total += cart.deliveryFee || 0;
+
   return total;
  } catch (error) {
   throw new Error(error.message);
  }
   
+};
+
+const setDeliveryType = async (userId, type) => {
+  const cart = await Cart.findOne({ customer: userId });
+  if (!cart) throw new Error('Cart not found');
+
+  if (!['IN_CAMPUS', 'OFF_CAMPUS'].includes(type)) {
+    throw new Error('Invalid delivery type');
+  }
+
+  cart.deliveryType = type;
+  cart.deliveryFee = type === 'IN_CAMPUS' ? 300 : 500;
+
+  await cart.save();
+  return cart;
 };
 
 
@@ -169,5 +183,5 @@ module.exports = {
   removeItemFromCart,
   clearCart,
   calculateCartTotal,
-
+  setDeliveryType
 }

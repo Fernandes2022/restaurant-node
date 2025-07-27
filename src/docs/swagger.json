@@ -1142,9 +1142,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["foodId", "quantity"],
+                "required": ["menuItemId", "quantity"],
                 "properties": {
-                  "foodId": {
+                  "menuItemId": {
                     "type": "string"
                   },
                   "quantity": {

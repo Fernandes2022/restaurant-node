@@ -23,6 +23,15 @@ const OrderSchema = new mongoose.Schema({
   type: mongoose.Schema.Types.ObjectId,
   ref: 'OrderItem',
  }],
+ deliveryType: {
+  type: String,
+  enum: ['IN_CAMPUS', 'OFF_CAMPUS'],
+  required: true
+},
+deliveryFee: {
+  type: Number,
+  required: true
+},
  payment: {
   type: mongoose.Schema.Types.ObjectId,
   ref: 'Payment',

@@ -9,10 +9,17 @@ const CartSchema = new mongoose.Schema({
    type: mongoose.Schema.Types.ObjectId,
    ref: 'CartItem',
   }],
+  deliveryType: {
+    type: String,
+    enum: ['IN_CAMPUS', 'OFF_CAMPUS'],
+    default: 'IN_CAMPUS'
+  },
+  deliveryFee: {
+    type: Number,
+    default: 300
+  },
   totalPrice: Number,
-  totalDiscountedPrice: Number,
   totalItems: Number,
-  discount: Number,
   total: Number
 })
 
