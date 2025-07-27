@@ -18,22 +18,25 @@ const allowedOrigins = [
   'https://timi-restaurant-node.vercel.app' // this is for Swagger UI hosted on same server
 ];
 
+app.use((req, res, next) => {
+  console.log('Incoming request:', req.method, req.url, 'Origin:', req.headers.origin);
+  next();
+});
+
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) {
+      // Allow requests like curl or Swagger with no Origin header
+      callback(null, true);
+    } else if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      console.warn(`CORS blocked: ${origin}`);
-      callback(null, false); // don't throw error
+      console.warn('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  credentials: true
 }));
-
-// Optional: explicitly handle preflight OPTIONS requests
-app.options('*', cors());
 
 
 app.use(bodyParser.json());
