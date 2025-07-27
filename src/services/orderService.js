@@ -16,40 +16,53 @@ const createOrder = async (order, user) => {
       throw new Error('Delivery address is required');
     }
 
-    
     if (address._id) {
-      const isAddressExist = await Address.findById(address._id);
-      if (isAddressExist) {
-        savedAddress = isAddressExist;
-      } else {
+      // Use existing address if ID is provided
+      savedAddress = await Address.findById(address._id);
+      if (!savedAddress) {
+        throw new Error('Provided address ID not found');
+      }
+    } else {
+      // Check if an identical address already exists for this user
+      savedAddress = await Address.findOne({
+        fullName: address.fullName,
+        streetAddress: address.streetAddress,
+        city: address.city,
+        state: address.state,
+        country: address.country,
+        postalCode: address.postalCode,
+      });
+
+      if (!savedAddress) {
+        // Create new only if not found
         const shippingAddress = new Address(address);
         savedAddress = await shippingAddress.save();
       }
-    } else {
-      const shippingAddress = new Address(address);
-      savedAddress = await shippingAddress.save();
     }
 
+    // Add address to user's saved addresses if not already present
     const addressAlreadySaved = user.addresses
-  .map(addrId => addrId.toString())
-  .includes(savedAddress._id.toString());
-
+      .map(addrId => addrId.toString())
+      .includes(savedAddress._id.toString());
 
     if (!addressAlreadySaved) {
       user.addresses.push(savedAddress._id);
       await user.save();
     }
 
+    // Find restaurant
     const restaurant = await Restaurant.findById(order.restaurantId);
     if (!restaurant) {
       throw new Error(`Restaurant not found with Id: ${order.restaurantId}`);
     }
 
+    // Get user's cart
     const cart = await findCartByUserId(user._id);
     if (!cart) {
       throw new Error('Cart not found');
     }
 
+    // Create order items
     const orderItems = [];
     for (const cartItem of cart.items) {
       const orderItem = new OrderItem({
@@ -62,12 +75,14 @@ const createOrder = async (order, user) => {
       orderItems.push(savedOrderItem._id);
     }
 
+    // Calculate total price
     const totalPrice = await calculateCartTotal(cart);
 
+    // Create the order
     const createdOrder = new Order({
       customer: user._id,
       restaurant: restaurant._id,
-      totalAmount: totalPrice,
+      totalAmount: totalPrice + cart.deliveryFee, // include delivery fee
       orderStatus: 'PENDING',
       deliveryAddress: savedAddress._id,
       deliveryType: cart.deliveryType,
@@ -77,9 +92,12 @@ const createOrder = async (order, user) => {
     });
 
     const savedOrder = await createdOrder.save();
+
+    // Add order to restaurant
     restaurant.orders.push(savedOrder._id);
     await restaurant.save();
 
+    // Clear user's cart
     await clearCart(user);
 
     return savedOrder;
@@ -87,6 +105,7 @@ const createOrder = async (order, user) => {
     throw new Error(`Failed to create order: ${error.message}`);
   }
 };
+
 
 
 
