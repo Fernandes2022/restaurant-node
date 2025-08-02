@@ -69,10 +69,12 @@ const addItemToCart = async (req, userId) => {
       return existingItem;
     }
 
+    const quantity = req.quantity || 1;
+
     const newCartItem = await CartItem.create({
       cart: cart._id,
       food: food._id,
-      quantity: 1,
+      quantity,
       totalPrice: food.price,
     });
 
