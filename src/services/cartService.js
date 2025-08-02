@@ -75,7 +75,7 @@ const addItemToCart = async (req, userId) => {
       cart: cart._id,
       food: food._id,
       quantity,
-      totalPrice: food.price,
+      totalPrice: food.price * quantity,
     });
 
     await Cart.findByIdAndUpdate(
