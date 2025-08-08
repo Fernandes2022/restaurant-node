@@ -59,6 +59,7 @@ const createOrder = async (order, user) => {
       totalAmount: totalPrice, 
       orderStatus: 'PENDING',
       deliveryAddress: savedAddress._id,
+      deliveryFee: cart.deliveryFee,
       deliveryType: cart.deliveryType,
       createdAt: new Date(),
       items: orderItems,
