@@ -56,14 +56,14 @@ const createOrder = async (order, user) => {
     const createdOrder = new Order({
       customer: user._id,
       restaurant: restaurant._id,
-      totalAmount: totalPrice + cart.deliveryFee, // include delivery fee
+      totalAmount: totalPrice, 
       orderStatus: 'PENDING',
       deliveryAddress: savedAddress._id,
       deliveryType: cart.deliveryType,
-      deliveryFee: cart.deliveryFee,
       createdAt: new Date(),
       items: orderItems,
     });
+    
 
     const savedOrder = await createdOrder.save();
 
@@ -116,16 +116,35 @@ const getUserOrders = async (userId) => {
 
 const getOrdersOfRestaurant = async (userId, orderStatus) => {
   try {
-    const restaurant = await Restaurant.findOne({owner: userId});
-    let orders = await Order.find({restaurant: restaurant._id});
-    if(orderStatus) {
-      orders = orders.filter(order => order.orderStatus === orderStatus);
+    const restaurant = await Restaurant.findOne({ owner: userId });
+
+    if (!restaurant) {
+      throw new Error('Restaurant not found for this user');
     }
+
+    let query = Order.find({ restaurant: restaurant._id })
+      .populate('customer', 'fullName email') 
+      .populate('deliveryAddress')            
+      .populate({
+        path: 'items',
+        populate: {
+          path: 'food',
+          select: 'name images price',         
+        }
+      });
+
+    if (orderStatus) {
+      query = query.where('orderStatus').equals(orderStatus);
+    }
+
+    const orders = await query.sort({ createdAt: -1 });
+
     return orders;
   } catch (error) {
-    throw new Error(`failed to get orders of restaurant : ${error.message}`);
+    throw new Error(`Failed to get orders of restaurant: ${error.message}`);
   }
-}
+};
+
 
 const updateOrderStatus = async (orderId, orderStatus) => {
   try {
