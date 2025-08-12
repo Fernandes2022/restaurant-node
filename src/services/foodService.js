@@ -15,7 +15,7 @@ const createFood = async (req, restaurant) => {
    isVegetarian: req.vegetarian,
    restaurant: restaurant._id,
    ingredients: req.ingredients,
-   available: req.availabe
+   available: req.available
   });
   await food.save();
   restaurant.foods.push(food._id);
@@ -57,7 +57,7 @@ const getRestaurantsFood = async (restaurantId, vegetarian, nonveg, seasonal, fo
    ]);
    return foods;
   } catch (error) {
-    throw new Error(`Failed to retrieve restaurant's food: ${error.message}`);
+    throw new Error(`Failed to retrieve restaurant's menu: ${error.message}`);
   }
 }
 
