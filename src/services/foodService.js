@@ -15,6 +15,7 @@ const createFood = async (req, restaurant) => {
    isVegetarian: req.vegetarian,
    restaurant: restaurant._id,
    ingredients: req.ingredients,
+   availabe: req.availabe
   });
   await food.save();
   restaurant.foods.push(food._id);
