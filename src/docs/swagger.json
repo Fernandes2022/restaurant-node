@@ -1571,6 +1571,9 @@
                   "vegetarian": {
                     "type": "boolean"
                   },
+                  "available": {
+                    "type": "boolean"
+                  },
                   "ingredients": {
                     "type": "array",
                     "items": {
