@@ -9,13 +9,13 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-// Middleware
+
 
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'https://nutri-c1.vercel.app',
-  'https://timi-restaurant-node.vercel.app' // this is for Swagger UI hosted on same server
+  'https://timi-restaurant-node.vercel.app' 
 ];
 
 app.use((req, res, next) => {

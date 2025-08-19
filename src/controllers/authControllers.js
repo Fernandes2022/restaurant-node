@@ -66,7 +66,8 @@ const forgotPassword = async (req, res) => {
       }
     });
 
-    const resetURL = `http://localhost:3000/reset-password?token=${token}&email=${user.email}`;
+    const sanitizedBaseUrl = 'https://nutri-c1.vercel.app';
+    const resetURL = `${sanitizedBaseUrl}/reset-password?token=${encodeURIComponent(token)}&email=${encodeURIComponent(user.email)}`;
     const message = `Reset your password by clicking ${resetURL}`;
 
     await transporter.sendMail({
