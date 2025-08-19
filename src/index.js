@@ -14,7 +14,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
-  'https://nutric.vercel.app',
+  'https://nutri-c1.vercel.app',
   'https://timi-restaurant-node.vercel.app' // this is for Swagger UI hosted on same server
 ];
 

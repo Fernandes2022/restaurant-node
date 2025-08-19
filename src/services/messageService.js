@@ -20,9 +20,8 @@ console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'Exists' : 'Missing');
         const mailOptions = {
             from: messageData.email,
             to: process.env.EMAIL,
-            subject: `Want to become a Restaurant Owner: ${messageData.subject}`,
+            subject: messageData.subject,
             html: `
-                <h3>Restaurant Owner Request</h3>
                 <p><strong>From:</strong> ${messageData.name} (${messageData.email})</p>
                 <p><strong>Subject:</strong> ${messageData.subject}</p>
                 <p><strong>Message:</strong></p>
