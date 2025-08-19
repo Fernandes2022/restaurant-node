@@ -1,4 +1,6 @@
 const Food = require('../model/food.model');
+const Cart = require('../model/cart.model');
+const CartItem = require('../model/cartItem.model');
 
 
 const createFood = async (req, restaurant) => {
@@ -32,6 +34,22 @@ const deleteFood = async (foodId) => {
   if(!food){
    throw new Error(`Food not found with ID ${foodId}`)
   }
+
+  // Remove any cart items that reference this food from all carts
+  const cartItems = await CartItem.find({ food: foodId }).select('_id');
+  if (cartItems && cartItems.length > 0) {
+   const cartItemIds = cartItems.map((ci) => ci._id);
+
+   // Pull the cart item ids from any cart that contains them
+   await Cart.updateMany(
+    { items: { $in: cartItemIds } },
+    { $pull: { items: { $in: cartItemIds } } }
+   );
+
+   // Delete the orphaned cart item documents
+   await CartItem.deleteMany({ _id: { $in: cartItemIds } });
+  }
+
   await Food.findByIdAndDelete(foodId);
  } catch (error) {
     throw new Error(error.message);
