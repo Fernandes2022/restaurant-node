@@ -1,11 +1,11 @@
-const {createCart, findCartByUserId, addItemToCart, updateCartQuantity, removeItemFromCart, clearCart, calculateCartTotal, setDeliveryType} = require('../services/cartService');
+const {createCart, findCartByUserId, findCartByIdentity, addItemToCart, updateCartQuantity, removeItemFromCart, clearCart, calculateCartTotal, setDeliveryType} = require('../services/cartService');
 
 const {findUserById, findUserProfileByJwt} = require('../services/userServices');
 
 const addToCart = async (req, res) => {
   try {
-   const user = req.user;
-   const cart = await addItemToCart(req.body, user._id);
+   const identity = req.user?._id ? { userId: req.user._id } : { guestId: req.guestId };
+   const cart = await addItemToCart(req.body, identity);
    res.status(200).json(cart);
   } catch (error) {
    if(error instanceof Error) {
@@ -33,8 +33,8 @@ const updateCartItemQuantity = async (req, res) => {
 const removeFromCart = async (req, res) => {
   try {
     const {id} = req.params;
-    const user = req.user;
-    const cart = await removeItemFromCart(id, user._id);
+    const identity = req.user?._id ? { userId: req.user._id } : { guestId: req.guestId };
+    const cart = await removeItemFromCart(id, identity);
     res.status(200).json(cart);
   } catch (error) {
     if(error instanceof Error) {
@@ -47,8 +47,8 @@ const removeFromCart = async (req, res) => {
 
 const findUserCart = async (req, res) => {
   try {
-    const user = req.user;
-    const cart = await findCartByUserId(user._id.toString());
+    const identity = req.user?._id ? { userId: req.user._id.toString() } : { guestId: req.guestId };
+    const cart = await findCartByIdentity(identity);
     res.status(200).json(cart);
   } catch (error) {
     if(error instanceof Error) {
@@ -61,10 +61,8 @@ const findUserCart = async (req, res) => {
 
 const calculateCartTotalController = async (req, res) => {
   try {
-    const user = req.user;
-
-    
-    const cart = await findCartByUserId(user._id);
+    const identity = req.user?._id ? { userId: req.user._id } : { guestId: req.guestId };
+    const cart = await findCartByIdentity(identity);
 
     const total = await calculateCartTotal(cart);
 
@@ -77,8 +75,8 @@ const calculateCartTotalController = async (req, res) => {
 
 const clearingCart = async (req, res) => {
   try {
-    const user = req.user;
-    const cart = await clearCart(user._id);
+    const identity = req.user?._id ? { userId: req.user._id } : { guestId: req.guestId };
+    const cart = await clearCart(identity);
     res.status(200).json(cart);
   } catch (error) {
     if(error instanceof Error) {
@@ -92,9 +90,9 @@ const clearingCart = async (req, res) => {
 const deliveryTypeController = async (req, res) => {
 
   try {
-    const user = req.user;
     const {type} = req.body;
-    const cart = await setDeliveryType(user._id.toString(), type);
+    const identity = req.user?._id ? { userId: req.user._id.toString() } : { guestId: req.guestId };
+    const cart = await setDeliveryType(identity, type);
     res.status(200).json(cart);
   } catch (error) {
     if(error instanceof Error) {

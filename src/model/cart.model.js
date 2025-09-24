@@ -5,6 +5,9 @@ const CartSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  guestId: {
+    type: String,
+  },
   items: [{
    type: mongoose.Schema.Types.ObjectId,
    ref: 'CartItem',

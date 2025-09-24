@@ -13,13 +13,18 @@ const {findUserById,} = require('../services/userServices');
 const createOrderController = async (req, res) => {
   try {
   const order = req.body;
-  const user = req.user;
+  const userOrIdentity = req.user || null;
 
   if(!order) {
    throw new Error('Please provide a valid request body');
   }
 
-  const paymentResponse = await createOrder(order, user);
+  if (!userOrIdentity) {
+    // ensure guest identity exists and is visible to service
+    order.guestId = req.guestId;
+  }
+
+  const paymentResponse = await createOrder(order, userOrIdentity);
   res.status(201).json(paymentResponse);
   } catch (error) {
     if(error instanceof Error) {
@@ -51,7 +56,8 @@ const getUserOrdersController = async (req, res) => {
 const cancelOrderController = async (req, res) => {
   try {
    const {orderId} = req.params;
-   await cancelOrder(orderId);
+   const user = req.user;
+   await cancelOrder(orderId, user._id);
    res.status(200).json({message: 'Order cancelled successfully'});
   } catch (error) {
     if(error instanceof Error) {

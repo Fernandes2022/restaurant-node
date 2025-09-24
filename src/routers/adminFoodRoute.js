@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {authenticate} = require('../middleware/authentication');
+const {authenticate, authorizeRoles} = require('../middleware/authentication');
 
 const {
  searchFoods,
@@ -10,9 +10,9 @@ const {
   updateAvailability
 } = require('../controllers/foodController');
 
-router.post('/create', authenticate, createItem);
-router.delete('/:id', authenticate, deleteItem);
-router.put('/status/:id', authenticate, updateAvailability);
+router.post('/create', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), createItem);
+router.delete('/:id', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), deleteItem);
+router.put('/status/:id', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), updateAvailability);
 
 
 module.exports = router;

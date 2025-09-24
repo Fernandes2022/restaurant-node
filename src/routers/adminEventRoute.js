@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {authenticate} = require('../middleware/authentication');
+const {authenticate, authorizeRoles} = require('../middleware/authentication');
 
 
 const {
@@ -11,9 +11,9 @@ const {
 } = require('../controllers/eventController');
 
 
-router.post('/restaurant/:restaurantId', createEventController);
-router.get('/restaurant/:restaurantId', findRestaurantEventsController);
+router.post('/restaurant/:restaurantId', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), createEventController);
+router.get('/restaurant/:restaurantId', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), findRestaurantEventsController);
 
-router.delete('/:id', deleteEventController);
+router.delete('/:id', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), deleteEventController);
 
 module.exports = router;

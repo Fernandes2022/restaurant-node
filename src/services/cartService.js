@@ -2,17 +2,36 @@ const Cart = require('../model/cart.model');
 const CartItem = require('../model/cartItem.model');
 const Food = require('../model/food.model');
 
-const createCart = async (user) => {
-  const cart = new Cart({customer: user});
+const createCartForIdentity = async (identity) => {
+  const cartPayload = {};
+  if (identity && identity.userId) {
+    cartPayload.customer = identity.userId;
+  }
+  if (identity && identity.guestId) {
+    cartPayload.guestId = identity.guestId;
+  }
+  const cart = new Cart(cartPayload);
   const createdCart = await cart.save();
   return createdCart;
 };
 
+// Backward-compatible wrapper
+const createCart = async (user) => {
+  return createCartForIdentity({ userId: user });
+};
 
-const findCartByUserId = async (userId) => {
-  let cart;
 
-  cart = await Cart.findOne({ customer: userId }).populate([
+const findCartByIdentity = async (identity) => {
+  const query = {};
+  if (identity && identity.userId) {
+    query.customer = identity.userId;
+  } else if (identity && identity.guestId) {
+    query.guestId = identity.guestId;
+  } else {
+    throw new Error('No identity provided');
+  }
+
+  let cart = await Cart.findOne(query).populate([
     {
       path: 'items',
       populate: {
@@ -23,37 +42,35 @@ const findCartByUserId = async (userId) => {
   ]);
 
   if (!cart) {
-    throw new Error(`Cart not found: ${userId}`);
+    cart = await createCartForIdentity(identity);
   }
 
-  console.log(cart.items);
-
   let totalPrice = 0;
-let totalItems = 0;
+  let totalItems = 0;
 
-for (let item of cart.items) {
-  totalPrice += Number(item.totalPrice) || 0;
-  totalItems += Number(item.quantity) || 0;
-}
+  for (let item of cart.items) {
+    totalPrice += Number(item.totalPrice) || 0;
+    totalItems += Number(item.quantity) || 0;
+  }
 
-cart.totalPrice = totalPrice;
-cart.totalItems = totalItems;
+  cart.totalPrice = totalPrice;
+  cart.totalItems = totalItems;
+  cart.total = totalPrice + (cart.deliveryFee || 0);
 
-cart.total = totalPrice + (cart.deliveryFee || 0);
+  await cart.save();
+  return cart;
+};
 
-await cart.save();
-return cart;
-
+// Backward-compatible wrapper
+const findCartByUserId = async (userId) => {
+  return findCartByIdentity({ userId });
 };
 
 
 
-const addItemToCart = async (req, userId) => {
+const addItemToCart = async (req, identity) => {
   try {
-    let cart = await Cart.findOne({ customer: userId });
-    if (!cart) {
-      cart = await createCart(userId);
-    }
+    const cart = await findCartByIdentity(identity);
 
     const food = await Food.findById(req.menuItemId);
     if (!food) {
@@ -114,11 +131,8 @@ const updateCartQuantity = async (cartItemId, quantity) => {
 };
 
 
-const removeItemFromCart = async (cartItemId, user) => {
-  const cart = await Cart.findOne({ customer: user._id });
-  if (!cart) {
-    throw new Error(`Cart not found: ${user._id}`);
-  }
+const removeItemFromCart = async (cartItemId, identity) => {
+  const cart = await findCartByIdentity(identity);
 
   cart.items = cart.items.filter((item) => !item.equals(cartItemId));
   await cart.save();
@@ -129,11 +143,8 @@ const removeItemFromCart = async (cartItemId, user) => {
 };
 
 
-const clearCart = async (user) => {
-  const cart = await Cart.findOne({ customer: user._id });
-  if (!cart) {
-    throw new Error(`Cart not found: ${user._id}`);
-  }
+const clearCart = async (identity) => {
+  const cart = await findCartByIdentity(identity);
 
   await CartItem.deleteMany({ cart: cart._id });
 
@@ -161,9 +172,8 @@ const calculateCartTotal = async (cart) => {
   
 };
 
-const setDeliveryType = async (userId, type) => {
-  const cart = await Cart.findOne({ customer: userId });
-  if (!cart) throw new Error('Cart not found');
+const setDeliveryType = async (identity, type) => {
+  const cart = await findCartByIdentity(identity);
 
   if (!['IN_CAMPUS', 'OFF_CAMPUS'].includes(type)) {
     throw new Error('Invalid delivery type');
@@ -179,7 +189,9 @@ const setDeliveryType = async (userId, type) => {
 
 module.exports = {
   createCart,
+  createCartForIdentity,
   findCartByUserId,
+  findCartByIdentity,
   addItemToCart,
   updateCartQuantity,
   removeItemFromCart,

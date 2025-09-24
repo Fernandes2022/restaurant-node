@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {authenticate} = require('../middleware/authentication');
+const {authenticate, identifyCustomer} = require('../middleware/authentication');
 
 
 const {
@@ -12,11 +12,11 @@ const {
 } = require('../controllers/cartController');
 
 
-router.put('/add', authenticate, addToCart);
-router.get('/total', authenticate, calculateCartTotalController);
-router.get('/', authenticate, findUserCart);
-router.put('/clear', authenticate, clearingCart);
-router.put('/delivery-type', authenticate, deliveryTypeController);
+router.put('/add', identifyCustomer, addToCart);
+router.get('/total', identifyCustomer, calculateCartTotalController);
+router.get('/', identifyCustomer, findUserCart);
+router.put('/clear', identifyCustomer, clearingCart);
+router.put('/delivery-type', identifyCustomer, deliveryTypeController);
 
 module.exports = router;
 

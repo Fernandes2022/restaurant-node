@@ -24,6 +24,10 @@ const UserSchema = new mongoose.Schema({
    ref: 'Address'
   }
  ],
+ signupDiscountUsed: {
+  type: Boolean,
+  default: false
+ }
 });
 
 const User = mongoose.model('User', UserSchema)

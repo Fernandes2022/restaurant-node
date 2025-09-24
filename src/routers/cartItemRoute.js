@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {authenticate} = require('../middleware/authentication');
+const {authenticate, identifyCustomer} = require('../middleware/authentication');
 
 
 const {
@@ -9,8 +9,8 @@ const {
 } = require('../controllers/cartController');
 
 
-router.put('/update', authenticate, updateCartItemQuantity);
-router.delete('/:id/remove', authenticate, removeFromCart);
+router.put('/update', identifyCustomer, updateCartItemQuantity);
+router.delete('/:id/remove', identifyCustomer, removeFromCart);
 
 
 module.exports = router;

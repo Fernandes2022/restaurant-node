@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {authenticate} = require('../middleware/authentication');
+const {authenticate, authorizeRoles} = require('../middleware/authentication');
 
 
 
@@ -14,9 +14,9 @@ const {
 
 
 
-router.delete('/:orderId', authenticate, cancelOrderController);
-router.get('/restaurant', authenticate, getOrdersOfRestaurantController);
-router.put('/:orderId/:orderStatus', authenticate, updateOrderStatusController);
+router.delete('/:orderId', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), cancelOrderController);
+router.get('/restaurant', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), getOrdersOfRestaurantController);
+router.put('/:orderId/:orderStatus', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), updateOrderStatusController);
 
 
 module.exports = router;

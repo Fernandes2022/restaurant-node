@@ -5,6 +5,9 @@ const OrderSchema = new mongoose.Schema({
   type: mongoose.Schema.Types.ObjectId,
   ref: 'User',
  },
+ guestId: {
+  type: String,
+ },
  restaurant: {
   type: mongoose.Schema.Types.ObjectId,
   ref: 'Restaurant',
@@ -32,12 +35,21 @@ deliveryFee: {
   type: Number,
   required: true
 },
+discountAmount: {
+  type: Number,
+  default: 0
+},
  payment: {
   type: mongoose.Schema.Types.ObjectId,
   ref: 'Payment',
  },
  totalItem: Number,
  totalPrice: Number,
+ guestDetails: {
+  name: String,
+  email: String,
+  phone: String,
+ },
 
 });
 

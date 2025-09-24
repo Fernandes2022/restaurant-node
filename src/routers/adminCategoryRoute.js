@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const {authenticate} = require('../middleware/authentication');
+const {authenticate, authorizeRoles} = require('../middleware/authentication');
 
 
 const {createCategoryController, findCategoryByRestaurantIdController} = require('../controllers/categoryController');
 
 
-router.post('/', authenticate, createCategoryController);
-router.get('/restaurant', authenticate, findCategoryByRestaurantIdController);
+router.post('/', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), createCategoryController);
+router.get('/restaurant', authenticate, authorizeRoles('ROLE_RESTAURANT_OWNER'), findCategoryByRestaurantIdController);
 
 module.exports = router;
