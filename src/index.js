@@ -15,6 +15,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
+  'http://localhost:3000',
   'https://nutri-c1.vercel.app',
   'https://timi-restaurant-node.vercel.app' 
 ];

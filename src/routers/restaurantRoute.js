@@ -3,7 +3,7 @@ const router = express.Router();
 const restaurantController = require('../controllers/restaurant.controller');
 const {authenticate, authorizeRoles} = require("../middleware/authentication")
 const { validateRestaurant, validateRestaurantUpdate } = require('../middleware/restaurantValidation');
-const { authorizeRoles } = require('../middleware/authentication');
+
 
 // Public routes
 router.get('/', restaurantController.getAllRestaurants);
